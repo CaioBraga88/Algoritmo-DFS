@@ -1,0 +1,23 @@
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/Assets/AssetStoreTools*
+/Assets/TextMesh Pro/Examples*
+/Packages/com.unity.ide.rider/RiderAssetPostProcessor.cs.meta
+/Packages/com.unity.ide.visualstudio/Editor/ProjectGeneration/FileGenerators/AssemblyNameProvider.cs.meta
+/UserSettings/
+!/UserSettings/ProjectSettings.asset
+!/UserSettings/EditorSettings.asset
+*.csproj
+*.sln
+*.userprefs
+*.pidb
+*.svd
+*.suo
+*.workspace
+*.code-workspace
+/UnityPackageManager-lock.json
+/ProjectSettings/ProjectVersion.txt
+/ProjectSettings/ProjectSettings.asset.meta
