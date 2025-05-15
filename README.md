@@ -21,7 +21,7 @@ Para jogar o Labirinto DFS, siga as instruções abaixo:
 
 1.  Clone este repositório para o seu computador:
     ```bash
-    git clone (https://github.com/CaioBraga88/Algoritmo-DFS.git)
+    git clone https://github.com/CaioBraga88/Algoritmo-DFS.git
     ```
 2.  Abra o Unity Editor.
 3.  Na janela de abertura do Unity, clique em "Open" e selecione a pasta onde você clonou o repositório do projeto "Labirinto".
