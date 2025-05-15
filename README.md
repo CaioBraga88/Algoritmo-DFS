@@ -15,7 +15,7 @@ Para jogar o Labirinto DFS, siga as instruções abaixo:
 
 ### Pré-requisitos
 
-* Unity Editor instalado na versão **6000.0.49f1**.
+* Unity Editor instalado na versão **6000.0.46f1**.
 
 ### Passos
 
@@ -26,7 +26,7 @@ Para jogar o Labirinto DFS, siga as instruções abaixo:
 2.  Abra o Unity Editor.
 3.  Na janela de abertura do Unity, clique em "Open" e selecione a pasta onde você clonou o repositório do projeto "Labirinto".
 4.  Dentro do Unity Editor, navegue até a pasta de "Scenes" no painel "Project".
-5.  Abra a cena principal do jogo (provavelmente terá um nome como "Mapa1.unity" ou similar).
+5.  Abra a cena principal do jogo ("Mapa1.unity").
 6.  Clique no botão "Play" (o ícone de triângulo) no topo do Unity Editor para iniciar o jogo.
 
 ## Controles
