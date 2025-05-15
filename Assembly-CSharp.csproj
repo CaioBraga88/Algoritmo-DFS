@@ -42,17 +42,20 @@
     <UnityVersion>6000.0.46f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Users\hanzb\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.1.1\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="C:\Users\hanzb\.vscode\extensions\visualstudiotoolsforunity.vstuc-1.1.2\Analyzers\Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.46f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.SourceGenerators.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.46f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.46f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\scripts\PassagensDeFase\PassagemMapa2.cs" />
     <Compile Include="Assets\scripts\VerticesDfs.cs" />
+    <Compile Include="Assets\scripts\PassagensDeFase\PassagemMapa3.cs" />
     <Compile Include="Assets\scripts\movimentoJogador.cs" />
+    <Compile Include="Assets\scripts\AnimacaoJogador.cs" />
     <Compile Include="Assets\scripts\MovimentoDfs.cs" />
-    <Compile Include="Assets\scripts\PassagemMapa2.cs" />
-    <Compile Include="Assets\scripts\CheckMoveDoJogador.cs" />
+    <Compile Include="Assets\scripts\VerticeJogadorDetector.cs" />
+    <Compile Include="Assets\scripts\JogoController.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
