@@ -1,146 +1,123 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 public class MovimentoDfs : MonoBehaviour
 {
-    public float moveSpeed = 5f;
-    public Transform startNode;
-    private Transform currentNode;
-    private Stack<Transform> path = new Stack<Transform>();
-    private HashSet<Transform> visitedNodes = new HashSet<Transform>();
-    private bool isMoving = false;
-    private Transform nextNode;
-    private Rigidbody2D rb2D;
-    [HideInInspector] public List<Transform> correctPath = new List<Transform>();
-    public static MovimentoDfs instance;
-    public Transform finalNode;
+    public Transform startVertex; // O vértice inicial
+    public Transform targetVertex; // O vértice final
+    public float moveSpeed = 5f; // Velocidade de movimento entre as casas
+    public float arrivalThreshold = 0.01f; // Tolerância para considerar que chegou ao nó
 
-    void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else if (instance != this)
-        {
-            Destroy(gameObject);
-        }
-    }
+    private HashSet<Transform> visitedVertices = new HashSet<Transform>();
+    private Stack<Transform> pathStack = new Stack<Transform>();
+    private Transform currentTarget; // O nó atual
+    private Transform nextTarget; // O próximo nó a se mover
+    private bool isMoving = false;
+    private bool reachedTarget = false;
+    private Rigidbody2D rb;
+    private List<Transform> dfsPath = new List<Transform>(); // Lista para armazenar o caminho do DFS
 
     void Start()
     {
-        rb2D = GetComponent<Rigidbody2D>();
-        if (rb2D == null)
+        if (startVertex == null || targetVertex == null)
         {
-            Debug.LogError("Rigidbody2D não encontrado no objeto!");
+            Debug.LogError("Vértice inicial ou final não atribuídos no MoverAgente!");
+            enabled = false;
+            return;
         }
-        if (startNode != null)
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
         {
-            currentNode = startNode;
-            path.Push(currentNode);
-            visitedNodes.Add(currentNode);
-            correctPath.Add(startNode); // Adiciona o nó inicial
-            Debug.Log("MovimentoDfs Start: correctPath count após adicionar startNode: " + correctPath.Count);
-            FindNextNode();
+            Debug.LogError("Rigidbody 2D não encontrado no GameObject com o script MovimentoDfs!");
+            enabled = false;
+            return;
         }
-        else
-        {
-            Debug.LogError("O Start Node não foi definido no DFSMover!");
-        }
+
+        // Inicializa o DFS
+        pathStack.Push(startVertex);
+        visitedVertices.Add(startVertex);
+        currentTarget = startVertex;
+        dfsPath.Add(startVertex); // Adiciona o vértice inicial ao caminho
+        isMoving = true;
+        FindNextTarget();
     }
 
     void FixedUpdate()
     {
-        if (isMoving && nextNode != null && rb2D != null)
+        if (isMoving && nextTarget != null && !reachedTarget && rb != null)
         {
-            Vector2 targetPosition = nextNode.position;
-            Vector2 currentPosition = rb2D.position;
-            Vector2 newPosition = Vector2.MoveTowards(currentPosition, targetPosition, moveSpeed * Time.deltaTime);
-            rb2D.MovePosition(newPosition);
+            Vector2 targetPosition = nextTarget.position;
+            Vector2 currentPosition = rb.position;
 
-            // Se o objeto chegou ao nó atual, pare o movimento e encontre o próximo nó
-            if (Vector2.Distance(currentPosition, targetPosition) < 0.1f)
-            {
-                isMoving = false;
-                currentNode = nextNode;
-                FindNextNode();
-            }
-        }
-    }
+            Vector2 moveDirection = (targetPosition - currentPosition).normalized;
+            Vector2 newPosition = currentPosition + moveDirection * moveSpeed * Time.fixedDeltaTime;
+            rb.MovePosition(newPosition);
 
-    void FindNextNode()
-    {
-        List<Transform> unvisitedNeighbors = GetUnvisitedNeighbors(currentNode);
-
-        if (unvisitedNeighbors.Count > 0)
-        {
-            nextNode = unvisitedNeighbors.FirstOrDefault();
-            if (nextNode != null)
+            if (Vector2.Distance(currentPosition, targetPosition) < arrivalThreshold)
             {
-                path.Push(nextNode);
-                visitedNodes.Add(nextNode);
-                correctPath.Add(nextNode);
-                Debug.Log("MovimentoDfs FindNextNode: Adicionado nó " + nextNode.name + ", correctpath count: " + correctPath.Count);
-                isMoving = true; // Inicia o movimento
-            }
-        }
-        else
-        {
-            if (path.Count > 1)
-            {
-                path.Pop();
-                currentNode = path.Peek();
-                FindNextNode();
-            }
-            else
-            {
-                Debug.Log("Busca DFS completa!");
-
-                // Marca o último nó visitado como final
-                if (correctPath.Count > 0)
+                rb.MovePosition(targetPosition); // Garante a chegada exata
+                currentTarget = nextTarget;
+                nextTarget = null;
+                if (currentTarget == targetVertex)
                 {
-                    finalNode = correctPath[correctPath.Count - 1];
-                    Debug.Log("Último nó visitado (finalNode): " + finalNode.name);
-                    
-                    // Destaca o vértice final
-                    SpriteRenderer sr = finalNode.GetComponent<SpriteRenderer>();
-                    if (sr != null)
-                    {
-                        sr.color = Color.green; // Altera a cor do finalNode para verde
-                    }
-                    else
-                    {
-                        Debug.LogWarning("finalNode não possui SpriteRenderer para destacar.");
-                    }
+                    Debug.Log("Chegou ao vértice final (Tabuleiro DFS): " + targetVertex.name);
+                    isMoving = false;
+                    reachedTarget = true;
+                    return;
                 }
                 else
                 {
-                    Debug.LogWarning("O caminho correto (correctPath) está vazio!");
+                    FindNextTarget();
                 }
-
-                // Para o movimento, garantindo que o objeto não se mova mais
-                isMoving = false;
             }
         }
     }
 
-    List<Transform> GetUnvisitedNeighbors(Transform node)
+    void FindNextTarget()
     {
-        VerticesDfs vertexScript = node.GetComponent<VerticesDfs>(); // Alteração aqui: usando VerticesDfs
-        if (vertexScript != null)
+        VerticesDfs currentVertexScript = currentTarget.GetComponent<VerticesDfs>();
+
+        if (currentVertexScript != null)
         {
-            return vertexScript.neighbors.Where(neighbor => !visitedNodes.Contains(neighbor)).ToList();
+            foreach (Transform neighbor in currentVertexScript.neighbors)
+            {
+                if (!visitedVertices.Contains(neighbor))
+                {
+                    visitedVertices.Add(neighbor);
+                    pathStack.Push(neighbor);
+                    nextTarget = neighbor;
+                    dfsPath.Add(nextTarget); // Adiciona o novo alvo ao caminho
+                    Debug.Log("Movendo para o vizinho (Tabuleiro DFS): " + neighbor.name);
+                    return;
+                }
+            }
         }
         else
         {
-            Debug.LogError("O nó " + node.name + " não possui o script VerticesDfs!"); // Altere a mensagem de erro também
-            return new List<Transform>();
+            Debug.LogError("Script VerticesDfs não encontrado no vértice: " + currentTarget.name);
+            isMoving = false;
+            currentTarget = null;
+            return;
+        }
+
+        // Se não há vizinhos não visitados, volta para o vértice anterior na pilha (backtracking do DFS)
+        if (pathStack.Count > 0)
+        {
+            nextTarget = pathStack.Pop();
+            dfsPath.Add(nextTarget); // Adiciona o alvo de backtracking ao caminho
+            Debug.Log("Backtracking para (Tabuleiro DFS): " + nextTarget.name);
+        }
+        else
+        {
+            Debug.Log("Todos os vértices acessíveis foram visitados (Tabuleiro DFS).");
+            isMoving = false;
+            currentTarget = null;
         }
     }
 
-    public List<Transform> GetCorrectPath()
+    public List<Transform> GetDFSPath()
     {
-        return new List<Transform>(correctPath);
+        return dfsPath;
     }
 }
